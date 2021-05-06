@@ -1,4 +1,3 @@
-var currentTime = [];
 var cityName = "";
 var key = "ced9d59d21ec6fdf4cf0c985ca23cba5";
 var searchForm = document.querySelector("#citySearchBar");
@@ -6,6 +5,7 @@ function weatherDash() {
   fetch(
     "https://api.openweathermap.org/data/2.5/weather?q=" +
       cityName +
+      "&units=imperial" +
       "&appid=" +
       key
   )
@@ -13,7 +13,35 @@ function weatherDash() {
       return resp.json();
     })
     .then(function (data) {
-      console.log(data);
+      console.log("weather api data: ", data);
+      var lat = data.coord.lat;
+      var lon = data.coord.lon;
+      var city = data.name;
+      // fetch complete weather data from one call api
+      fetch(
+        "https://api.openweathermap.org/data/2.5/onecall?lat=" +
+          lat +
+          "&lon=" +
+          lon +
+          "&exclude=minutely,hourly,alert" +
+          "&units=imperial" +
+          "&appid=" +
+          key
+      )
+        .then(function (resp) {
+          return resp.json();
+        })
+        .then(function (data) {
+          console.log("One call api data: ", data);
+          document.querySelector("#city").innerHTML = city;
+          document.querySelector("#currentTemp").innerHTML = data.current.temp;
+          document.querySelector("#wind").innerHTML = data.current.wind_speed;
+          document.querySelector("#UvIndex").innerHTML = data.current.uvi;
+        });
+
+      // psuedo code- get name of city from data
+      // get current temp from data
+      //
     });
 }
 
